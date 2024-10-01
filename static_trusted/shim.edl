@@ -1,0 +1,58 @@
+/* shim.edl - Top EDL file. */
+
+enclave {
+
+    include "stdint.h"
+    include "stdbool.h"
+    include "unistd.h"
+
+    untrusted {
+        void ocall_print_string([in, string] const char *str);
+
+        int ocall_open([in, string]const char *pathname, int flags,
+                       bool has_mode, unsigned mode);
+
+        int ocall_stat([in, string]const char *pathname,
+                       [out, size=buf_len]void *buf,
+                       unsigned int buf_len);
+
+        int ocall_statx(int dirfd, [in, string] const char* pathname, int flags, 
+                        unsigned int mask, [out, size=buf_len] void* statxbuf, 
+                        unsigned int buf_len);
+        
+        int ocall_getrandom([out, size=buflen] void* buf, unsigned int buflen, int flags);
+
+        int ocall_fstat(int fd, [out, size=buf_len]void *buf,
+                        unsigned int buf_len);
+        
+        off_t ocall_lseek(int fd, off_t offset, int whence);
+
+        ssize_t ocall_read(int fd, [out, size=read_size]void *buf,
+                           size_t read_size);
+        
+        int ocall_close(int fd);
+
+        ssize_t ocall_write(int fd, [in, size=count]const void *buf, size_t count);
+
+        int ocall_sched_getaffinity(int pid, size_t cpusetsize, [out, size=cpusetsize] void *mask);
+
+        int ocall_clock_gettime(unsigned clock_id,
+                                [out, size=tp_buf_size]void *tp_buf,
+                                unsigned int tp_buf_size);
+        
+        int ocall_realpath([in, string]const char *path,
+                           [out, size=buf_len]char *buf,
+                           unsigned int buf_len);
+        
+        int ocall_fcntl(int fd, int cmd);
+        int ocall_fcntl_long(int fd, int cmd, long arg);
+        int ocall_ftruncate(int fd, off_t length);
+        int ocall_unlinkat(int dirfd, [in, string]const char *pathname,
+                           int flags);
+
+    };
+
+    trusted {
+    	    public int ecall_shim_sample();
+    };
+};
